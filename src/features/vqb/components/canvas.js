@@ -1,163 +1,76 @@
-import React, { useState } from "react";
+import React from "react";
 import { DragDropContext } from "react-beautiful-dnd";
-import Query from "./query";
+import { useSelector, useDispatch } from "react-redux";
+import { createSelector } from "reselect";
 
-const relationshipsData = {
-  blocks: {
-    "rel-1": {
-      id: "rel-1",
-      type: "relationship",
-      label: "ACTED_IN",
-      modifiers: [],
-    },
-  },
-  blockOrder: ["rel-1"],
-};
+import Collection from "./collection";
+import styled from "styled-components";
 
-const testData = {
-  queries: [
-    // TODO: this should just be an object like the structure down below
-    {
-      blocks: {
-        "block-1": {
-          id: "block-1",
-          type: "node",
-          label: "Person",
-          value: "",
-          relationships: relationshipsData,
-          modifiers: [],
-        },
-        "block-2": {
-          id: "block-2",
-          type: "node",
-          label: "Movie",
-          value: "",
-          relationships: {
-            blocks: {},
-            blockOrder: [],
-          },
-          modifiers: [],
-        },
-      },
-      blockOrder: ["block-1", "block-2"],
-      queryId: "query-1",
-    },
-  ],
-  queryOrder: ["query-1"], // in case of multiple query (when we query by source at first?)
-};
+const QueryWrapper = styled.div`
+  padding: 20px;
+`;
 
-const reorderOrderArray = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-
-  result.splice(endIndex, 0, removed);
-  return result;
-};
-
-const addToOrderArray = (list, endIndex, newItem) => {
-  const result = Array.from(list);
-  result.splice(endIndex, 0, newItem);
-  return result;
-};
+const selectQueryCollection = createSelector(
+  (state) => state.collections.nodes,
+  (nodeCollections) => nodeCollections["query"]
+);
 
 export default function Canvas() {
-  const [state, setState] = useState(testData);
+  const queryCollection = useSelector((state) => selectQueryCollection(state));
+  const dispatch = useDispatch();
 
   function onDragEnd(result) {
-    console.log(result);
+    console.log("result of onDragEnd", result);
+
     if (!result.destination) {
+      // user didn't drop anywhere valid
+      // return block to previous position
       return;
     }
-    if (
-      result.type === "query" &&
-      result.destination.droppableId.includes("query")
-    ) {
-      if (result.destination.index === result.source.index) {
-        // this check needs improving too, see below?
-        return;
-      }
 
-      const blockOrder = reorderOrderArray(
-        state.queries[0].blockOrder,
-        result.source.index,
-        result.destination.index
-      );
-
-      const newQueries = [{ ...state.queries[0], blockOrder }];
-      setState({ ...state, queries: newQueries });
-    }
-
-    if (
-      result.type === "rel" &&
-      result.destination.droppableId.includes("rel")
-    ) {
-      if (result.destination.droppableId !== result.source.droppableId) {
-        const destinationBlockId = result.destination.droppableId.split(
-          "rel-to-"
-        )[1]; // MEH
-        const sourceBlockId = result.source.droppableId.split("rel-to-")[1]; // MEH
-        const destinationArray = state.queries[0][destinationBlockId];
-        const originalRelationshipBlock = {
-          ...state.queries[0].blocks[sourceBlockId].relationships.blocks[
-            result.draggableId
-          ],
-        };
-        console.log(
-          destinationBlockId,
-          result.draggableId,
-          originalRelationshipBlock
-        );
-        setState({
-          ...state,
-          queries: [
-            {
-              ...state.queries[0],
-              blocks: {
-                ...state.queries[0].blocks,
-                [sourceBlockId]: {
-                  ...state.queries[0].blocks[sourceBlockId],
-                  relationships: {
-                    blocks: {
-                      ...state.queries[0].blocks[sourceBlockId].relationships
-                        .blocks,
-                    },
-                    blockOrder: state.queries[0].blocks[
-                      sourceBlockId
-                    ].relationships.blockOrder.filter(
-                      (r) => r !== result.draggableId
-                    ),
-                  },
-                },
-                [destinationBlockId]: {
-                  ...state.queries[0].blocks[destinationBlockId],
-                  relationships: {
-                    blocks: {
-                      ...state.queries[0].blocks[destinationBlockId]
-                        .relationships.blocks,
-                      [result.draggableId]: originalRelationshipBlock,
-                    },
-                    blockOrder: addToOrderArray(
-                      state.queries[0].blocks[destinationBlockId].relationships
-                        .blockOrder,
-                      result.destination.index,
-                      result.draggableId
-                    ),
-                  },
-                },
-              },
-            },
-          ],
+    if (result.destination.droppableId === result.source.droppableId) {
+      // if destination and source are the same
+      // check if order array needs to be updated
+      // and update source array if necessary
+      if (result.destination.index !== result.source.index) {
+        dispatch({
+          type: "UPDATE_COLLECTION",
+          payload: {
+            collectionType: result.type,
+            collectionId: result.destination.droppableId, // or source? does it ever matter?
+            sourceIndex: result.source.index,
+            destinationIndex: result.destination.index,
+          },
         });
       }
-      if (result.destination.index !== result.source.index) {
-      }
     }
-    return;
+
+    if (result.destination.droppableId !== result.source.droppableId) {
+      // if dest and source are different
+      // update both collection array
+      dispatch({
+        type: "UPDATE_COLLECTIONS",
+        payload: {
+          itemId: result.draggableId,
+          collectionType: result.type,
+          sourceCollectionId: result.source.droppableId,
+          sourceIndex: result.source.index,
+          destinationCollectionId: result.destination.droppableId,
+          destinationIndex: result.destination.index,
+        },
+      });
+    }
   }
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Query query={state.queries[0]} />
+      <QueryWrapper>
+        {queryCollection ? (
+          <Collection id={queryCollection.id} type="nodes" />
+        ) : (
+          "No data"
+        )}
+      </QueryWrapper>
     </DragDropContext>
   );
 }

@@ -19,6 +19,7 @@ export default function Relationships({ blocks, blockOrder, id, to }) {
   return (
     <StyledRelationships>
       <h2>Relationship for entity: {to}</h2>
+      {/* TODO make this group/set of relationships draggable? */}
       <Droppable droppableId={`rel-to-${to}`} type="rel">
         {(provided) => (
           <div

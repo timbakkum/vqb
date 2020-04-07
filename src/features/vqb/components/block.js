@@ -2,6 +2,21 @@ import React from "react";
 import styled from "styled-components";
 import { Draggable } from "react-beautiful-dnd";
 import Relationships from "./relationships";
+import { useSelector } from "react-redux";
+import { createSelector } from "reselect";
+import Collection from "./collection";
+
+const borderColorMap = {
+  nodes: "#B3D9FF",
+  relationships: "#C964FF",
+  modifiers: "#00E3C9",
+};
+
+const colorMap = {
+  nodes: "#EBF5FF",
+  relationships: "#F8EBFF",
+  modifiers: "#94FFF3",
+};
 
 const HorizontalModifier = styled.div``;
 
@@ -12,23 +27,36 @@ const VerticalModifier = styled.div`
 const BlockBody = styled.div`
   display: flex;
   flex-direction: column;
-  min-width: 200px;
+  width: 250px;
+  min-width: 250px;
 `;
 
-const BlockLabel = styled.h3``;
+const BlockLabel = styled.span`
+  display: block;
+  padding: 10px;
+  font-size: 12px;
+  text-align: center;
+  border-width: 1px;
+  border-style: solid;
+  border-color: ${(props) => borderColorMap[props.type]};
+  border-radius: 6px;
+  background: ${(props) => colorMap[props.type]};
+  height: 100%;
+`;
 
 const StyledBlock = styled.div`
-  padding: 10px;
-  border-width: 4px;
-  border-style: solid;
-  border-color: ${(props) => (props.type === "node" ? "lightblue" : "cyan")};
-  margin-bottom: 10px;
-  background: white;
   display: flex;
   flex-wrap: nowrap;
 `;
 
-export default function Block({ data, id, index }) {
+const getBlockData = createSelector(
+  (state, type) => state.blocks[type],
+  (_, __, id) => id,
+  (blocksOfType, id) => blocksOfType[id]
+);
+
+export default function Block({ id, index, type }) {
+  const blockData = useSelector((state) => getBlockData(state, type, id));
   return (
     <Draggable draggableId={id} index={index}>
       {(provided) => (
@@ -36,17 +64,23 @@ export default function Block({ data, id, index }) {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          type={data.type}
         >
           <BlockBody>
-            <BlockLabel>{data.label}</BlockLabel>
-            <VerticalModifier>vertical modifier here</VerticalModifier>
+            <BlockLabel type={type}>
+              label: {blockData.label}, id: {id}
+            </BlockLabel>
+            {/* <VerticalModifier>vertical modifier here</VerticalModifier> */}
           </BlockBody>
 
-          {data.type === "node" && data.relationships && (
+          {blockData.type === "nodes" && blockData.relationshipCollection && (
             // TODO render to the side
             <HorizontalModifier>
-              <Relationships {...data.relationships} to={data.id} />
+              {/* <p>relationship zone</p> */}
+              <Collection
+                id={blockData.relationshipCollection}
+                type={"relationships"}
+              />
+              {/* <Relationships {...blockData.relationships} to={blockData.id} /> */}
             </HorizontalModifier>
           )}
           {/* Do same for node/relationship modifiers and render below*/}
