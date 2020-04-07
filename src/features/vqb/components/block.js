@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { Draggable } from "react-beautiful-dnd";
-import Relationships from "./relationships";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 import Collection from "./collection";
@@ -18,7 +17,9 @@ const colorMap = {
   modifiers: "#94FFF3",
 };
 
-const HorizontalModifier = styled.div``;
+const HorizontalModifier = styled.div`
+  /* some smart ass styles here? */
+`;
 
 const VerticalModifier = styled.div`
   flex-grow: 1;
@@ -40,7 +41,9 @@ const BlockLabel = styled.span`
   border-style: solid;
   border-color: ${(props) => borderColorMap[props.type]};
   border-radius: 6px;
-  background: ${(props) => colorMap[props.type]};
+  transition: background 0.3s ease;
+  background: ${(props) =>
+    props.isDragging ? "#F5A623" : colorMap[props.type]};
   height: 100%;
 `;
 
@@ -57,33 +60,48 @@ const getBlockData = createSelector(
 
 export default function Block({ id, index, type }) {
   const blockData = useSelector((state) => getBlockData(state, type, id));
+  console.log(type, id, blockData);
   return (
     <Draggable draggableId={id} index={index}>
-      {(provided) => (
+      {(provided, snapshot) => (
         <StyledBlock
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
         >
           <BlockBody>
-            <BlockLabel type={type}>
+            <BlockLabel type={type} isDragging={snapshot.isDragging}>
               label: {blockData.label}, id: {id}
+              {blockData.type === "modifiers" && (
+                <p>
+                  {blockData.operator} {blockData.variable}
+                </p>
+              )}
             </BlockLabel>
-            {/* <VerticalModifier>vertical modifier here</VerticalModifier> */}
+            {(blockData.type === "nodes" ||
+              blockData.type === "relationships") && (
+              <VerticalModifier>
+                <Collection
+                  id={blockData.modifierCollection}
+                  type="modifiers"
+                />
+              </VerticalModifier>
+            )}
           </BlockBody>
 
           {blockData.type === "nodes" && blockData.relationshipCollection && (
-            // TODO render to the side
             <HorizontalModifier>
-              {/* <p>relationship zone</p> */}
               <Collection
                 id={blockData.relationshipCollection}
-                type={"relationships"}
+                type="relationships"
               />
-              {/* <Relationships {...blockData.relationships} to={blockData.id} /> */}
             </HorizontalModifier>
           )}
-          {/* Do same for node/relationship modifiers and render below*/}
+          {blockData.type === "relationships" && (
+            <HorizontalModifier>
+              <Collection id={blockData.nodeCollection} type="nodes" />
+            </HorizontalModifier>
+          )}
         </StyledBlock>
       )}
     </Draggable>

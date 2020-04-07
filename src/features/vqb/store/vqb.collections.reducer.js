@@ -3,6 +3,18 @@ const nodeCollections = {
     id: "query",
     order: ["node-1", "node-2"],
   },
+  "rel-1-node": {
+    id: "rel-1-node",
+    order: ["node-3"],
+  },
+  "rel-2-node": {
+    id: "rel-2-node",
+    order: [],
+  },
+  "rel-3-node": {
+    id: "rel-3-node",
+    order: [],
+  },
 };
 
 const relationCollections = {
@@ -14,9 +26,38 @@ const relationCollections = {
     id: "node-2",
     order: ["rel-3"],
   },
+  "node-3": {
+    id: "node-3",
+    order: [],
+  },
 };
 
-const modifierCollections = {};
+const modifierCollections = {
+  "node-1-mod": {
+    id: "node-1-mod",
+    order: ["mod-1"],
+  },
+  "node-2-mod": {
+    id: "node-2-mod",
+    order: [],
+  },
+  "node-3-mod": {
+    id: "node-3-mod",
+    order: [],
+  },
+  "rel-1-mod": {
+    id: "rel-1-mod",
+    order: [],
+  },
+  "rel-2-mod": {
+    id: "rel-2-mod",
+    order: [],
+  },
+  "rel-3-mod": {
+    id: "rel-3-mod",
+    order: ["mod-2"],
+  },
+};
 
 const unusedCollections = {
   unused: {

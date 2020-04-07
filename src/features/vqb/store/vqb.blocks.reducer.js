@@ -5,7 +5,7 @@ const nodes = {
     label: "Person",
     value: "",
     relationshipCollection: "node-1",
-    modifierCollection: null,
+    modifierCollection: "node-1-mod",
   },
   "node-2": {
     id: "node-2",
@@ -13,7 +13,15 @@ const nodes = {
     label: "Movie",
     value: "",
     relationshipCollection: "node-2",
-    modifierCollection: null,
+    modifierCollection: "node-2-mod",
+  },
+  "node-3": {
+    id: "node-3",
+    type: "nodes",
+    label: "Person",
+    value: "",
+    relationshipCollection: "node-3",
+    modifierCollection: "node-3-mod",
   },
 };
 
@@ -22,26 +30,41 @@ const relationships = {
     id: "rel-1",
     type: "relationships",
     label: "ACTED_IN",
-    modifierCollection: null,
+    modifierCollection: "rel-1-mod",
+    nodeCollection: "rel-1-node",
   },
   "rel-2": {
     id: "rel-2",
     type: "relationships",
     label: "DIRECTED",
-    modifierCollection: null,
+    modifierCollection: "rel-2-mod",
+    nodeCollection: "rel-2-node",
   },
   "rel-3": {
-    id: "rel-2",
+    id: "rel-3",
     type: "relationships",
     label: "REVIEWED",
-    modifierCollection: null,
+    modifierCollection: "rel-3-mod",
+    nodeCollection: "rel-3-node",
   },
 };
 
 const modifiers = {
-  // 1: {
-  //   // some data
-  // },
+  "mod-1": {
+    id: "mod-1",
+    type: "modifiers",
+    label: "name",
+    operator: "=",
+    variable: "Tom Hanks",
+  },
+
+  "mod-2": {
+    id: "mod-2",
+    type: "modifiers",
+    label: "rating",
+    operator: ">",
+    variable: "5",
+  },
 };
 
 const initialBlocks = {

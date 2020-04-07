@@ -12,9 +12,10 @@ const borderColorMap = {
 };
 
 const StyledCollection = styled.div`
-  /* border-width: 1px;
-  border-style: solid;
-  border-color: ${(props) => borderColorMap[props.type]}; */
+  /* min-height: ${(props) => (props.isDraggingOver ? "40px" : "0")}; */
+  transition: background 0.3s ease;
+  background: ${(props) =>
+    props.isDraggingOver ? borderColorMap[props.type] : "white"};
 `;
 
 const getCollectionData = createSelector(
@@ -30,21 +31,22 @@ export default function Collection({ type, id }) {
   const hasBlocks = items.length > 0;
 
   return (
-    <StyledCollection type={type}>
-      <Droppable droppableId={id} type={type}>
-        {(provided) => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
-            {hasBlocks ? (
-              items.map((id, i) => (
+    <Droppable droppableId={id} type={type}>
+      {(provided, snapshot) => (
+        <StyledCollection
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          type={type}
+          isDraggingOver={snapshot.isDraggingOver}
+        >
+          {hasBlocks
+            ? items.map((id, i) => (
                 <Block key={id} id={id} index={i} type={type} />
               ))
-            ) : (
-              <p>No blocks here yet! Maybe try adding a type of {type}</p>
-            )}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </StyledCollection>
+            : null}
+          {provided.placeholder}
+        </StyledCollection>
+      )}
+    </Droppable>
   );
 }
