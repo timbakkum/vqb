@@ -50,6 +50,7 @@ const BlockLabel = styled.span`
 const StyledBlock = styled.div`
   display: flex;
   flex-wrap: nowrap;
+  margin-bottom: ${(props) => (props.type === "nodes" ? "10px" : 0)};
 `;
 
 const getBlockData = createSelector(
@@ -68,6 +69,7 @@ export default function Block({ id, index, type }) {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
+          type={type}
         >
           <BlockBody>
             <BlockLabel type={type} isDragging={snapshot.isDragging}>

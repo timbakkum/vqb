@@ -12,7 +12,8 @@ const borderColorMap = {
 };
 
 const StyledCollection = styled.div`
-  /* min-height: ${(props) => (props.isDraggingOver ? "40px" : "0")}; */
+  min-height: ${(props) => (props.isDraggingOver ? "40px" : "0")};
+  /* min-height: 40px; */
   transition: background 0.3s ease;
   background: ${(props) =>
     props.isDraggingOver ? borderColorMap[props.type] : "white"};
