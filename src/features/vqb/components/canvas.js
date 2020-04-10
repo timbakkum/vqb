@@ -11,7 +11,7 @@ const QueryWrapper = styled.div`
 `;
 
 const selectQueryCollection = createSelector(
-  (state) => state.collections.nodes,
+  (state) => state.vqb.collections.nodes,
   (nodeCollections) => nodeCollections["query"]
 );
 

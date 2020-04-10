@@ -54,7 +54,7 @@ const StyledBlock = styled.div`
 `;
 
 const getBlockData = createSelector(
-  (state, type) => state.blocks[type],
+  (state, type) => state.vqb.blocks[type],
   (_, __, id) => id,
   (blocksOfType, id) => blocksOfType[id]
 );

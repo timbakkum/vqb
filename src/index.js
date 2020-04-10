@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import Store from "./features/vqb/store/vqb.store";
+import Store from "./store/store";
 
 ReactDOM.render(
   <React.StrictMode>

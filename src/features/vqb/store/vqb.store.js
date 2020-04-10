@@ -1,12 +1,10 @@
-import { createStore, compose } from "redux";
-import rootReducer from "./vqb.reducer";
+import { combineReducers } from "redux";
+import blocks from "./vqb.blocks.reducer";
+import collections from "./vqb.collections.reducer";
 
-const Store = createStore(
-  rootReducer,
-  compose(
-    //applyMiddleware(thunk),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-  )
-);
+const vqb = combineReducers({
+  blocks,
+  collections,
+});
 
-export default Store;
+export default vqb;

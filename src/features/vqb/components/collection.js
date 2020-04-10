@@ -20,7 +20,7 @@ const StyledCollection = styled.div`
 `;
 
 const getCollectionData = createSelector(
-  (state, type) => state.collections[type],
+  (state, type) => state.vqb.collections[type],
   (_, __, id) => id,
   (collectionsOfType, id) => collectionsOfType[id]
 );
