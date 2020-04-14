@@ -4,8 +4,9 @@ import styled from "styled-components";
 const StyledQueryRow = styled.div`
   display: flex;
   flex-direction: row;
-  /* background: white; */
-  justify-content: space-evenly;
+  background: white;
+  border: 1px solid black;
+  justify-content: center;
 `;
 
 export default function QueryRow({ children }) {

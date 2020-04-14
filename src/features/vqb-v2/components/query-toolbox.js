@@ -1,5 +1,6 @@
 import React from "react";
 import Block, { BlockTypes } from "./block";
+import ToolboxBlock from "./toolbox-block";
 
 // @TODO add node and relationship properties in a later stage
 const schema = {
@@ -40,12 +41,16 @@ export default function QueryToolBox() {
       <hr />
       <h3>Nodes</h3>
       {schema.nodes.map((node, i) => (
-        <Block type={BlockTypes.NODE} id={i} label={node.label} />
+        <ToolboxBlock type={BlockTypes.NODE} key={i} label={node.label} />
       ))}
       <hr />
       <h3>Relationships</h3>
       {schema.relations.map((rel, i) => (
-        <Block type={BlockTypes.REL} id={i} label={rel.relationshipType} />
+        <ToolboxBlock
+          type={BlockTypes.REL}
+          key={i}
+          label={rel.relationshipType}
+        />
       ))}
     </div>
   );

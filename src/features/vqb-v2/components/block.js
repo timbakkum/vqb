@@ -6,15 +6,17 @@ const borderColorMap = {
   node: "#B3D9FF",
   relationship: "#C964FF",
   modifier: "#00E3C9",
+  empty: "grey",
 };
 
 const colorMap = {
   node: "#EBF5FF",
   relationship: "#F8EBFF",
   modifier: "#94FFF3",
+  empty: "lightgrey",
 };
 
-const StyledBlock = styled.div`
+export const StyledBlock = styled.div`
   display: block;
   padding: 10px;
   font-size: 12px;
@@ -34,7 +36,19 @@ export const BlockTypes = {
   MOD: "modifier",
 };
 
-export default function Block({ type, id, label }) {
+export const EMPTY_BLOCK_TYPE = "empty";
+
+export function EmptyBlock() {
+  return (
+    <StyledBlock type={EMPTY_BLOCK_TYPE} isDragging={false}>
+      <p>Empty placeholder block</p>
+    </StyledBlock>
+  );
+}
+
+export default function Block({ data }) {
+  const { type, id, label } = data;
+
   const [collectedProps, drag] = useDrag({
     item: { id, type, label },
     collect: (monitor) => ({

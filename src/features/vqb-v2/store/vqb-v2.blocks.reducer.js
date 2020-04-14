@@ -1,15 +1,18 @@
-import { COPY_BLOCK, ADD_BLOCK } from "./vqb-v2.actions";
+import { COPY_BLOCK, CREATE_BLOCK } from "./vqb-v2.actions";
 
 const initialBlocks = {};
 
 const blocks = (state = initialBlocks, action) => {
   switch (action.type) {
-    case ADD_BLOCK: {
-      const { blockData } = action.payload;
+    case CREATE_BLOCK: {
+      const { id, type, label } = action.payload;
       return {
         ...state,
-        [blockData.id]: {
-          ...blockData,
+        [id]: {
+          // TODO create new items more dynamically
+          id,
+          type,
+          label,
         },
       };
     }
