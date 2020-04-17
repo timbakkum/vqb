@@ -17,7 +17,7 @@ const getBlockData = createSelector(
 const getAcceptType = (blockType) => {
   console.log(blockType);
   if (!blockType) {
-    return Object.values(BlockTypes);
+    return [BlockTypes.REL, BlockTypes.NODE];
   }
   return blockType;
 };
@@ -30,12 +30,14 @@ const Dropzone = ({ queryId, blockId, index }) => {
 
   const blockType = blockData ? blockData.type : null;
 
-  const [{ isOver }, drop] = useDrop({
+  const [{ isOver, canDrop, itemType }, drop] = useDrop({
     accept: getAcceptType(blockType),
     drop: (item, monitor) => {
       console.log("dropped item ", item, "on", blockId, monitor);
       const { type, isPrototype } = item;
       if (isPrototype && !blockId) {
+        console.log("firing too");
+
         dispatch(
           copyBlock({
             destination: { queryId, index },
@@ -53,6 +55,8 @@ const Dropzone = ({ queryId, blockId, index }) => {
       // console.log(monitor);
       return {
         isOver: !!monitor.isOver(), // is something dragging over this zone?
+        canDrop: !!monitor.canDrop(), // can the current item being dragged over be dropped here?
+        itemType: monitor.getItemType(), // get the item type of the current item being dragged over
       };
     },
   });
@@ -62,12 +66,22 @@ const Dropzone = ({ queryId, blockId, index }) => {
       ref={drop}
       style={{
         position: "relative",
-        minWidth: "300px",
+        minWidth: "200px",
+        maxWidth: "200px",
         minHeight: "100px",
-        background: isOver ? "green" : "blue",
+        background: "white",
       }}
     >
-      {blockData ? <Block data={blockData} /> : <EmptyBlock />}
+      {blockData ? (
+        <Block
+          data={blockData}
+          isOver={isOver}
+          canDrop={canDrop}
+          itemType={itemType}
+        />
+      ) : (
+        <EmptyBlock isOver={isOver} canDrop={canDrop} itemType={itemType} />
+      )}
     </div>
   );
 };

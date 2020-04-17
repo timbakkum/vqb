@@ -15,7 +15,6 @@ export default function ToolboxBlock({ type, label }) {
   return (
     <StyledBlock ref={drag} type={type} isDragging={collectedProps.isDragging}>
       <p>{label}</p>
-      <p>{type}</p>
     </StyledBlock>
   );
 }

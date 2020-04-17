@@ -5,7 +5,7 @@ const initialBlocks = {};
 const blocks = (state = initialBlocks, action) => {
   switch (action.type) {
     case CREATE_BLOCK: {
-      const { id, type, label } = action.payload;
+      const { id, type, label, modifierGroupId } = action.payload;
       return {
         ...state,
         [id]: {
@@ -13,6 +13,7 @@ const blocks = (state = initialBlocks, action) => {
           id,
           type,
           label,
+          modifierGroupId,
         },
       };
     }

@@ -34,6 +34,32 @@ const schema = {
   ],
 };
 
+const modifiers = {
+  boolean: [
+    {
+      label: "AND",
+    },
+    {
+      label: "NOT",
+    },
+    {
+      label: "OR",
+    },
+    {
+      label: "XOR",
+    },
+  ],
+  property: [
+    {
+      label: "property",
+      property: "", // one of the available properties
+      propertyType: "", // string | number
+      operator: "", // equals, contains etc
+      value: "", // value to filter property by
+    },
+  ],
+};
+
 export default function QueryToolBox() {
   return (
     <div style={{ border: "1px solid black", height: "100%" }}>
@@ -51,6 +77,15 @@ export default function QueryToolBox() {
           key={i}
           label={rel.relationshipType}
         />
+      ))}
+      <h3>Modifiers/Filters</h3>
+      <h4>Boolean</h4>
+      {modifiers.boolean.map((mod, i) => (
+        <ToolboxBlock type={BlockTypes.MOD} key={i} label={mod.label} />
+      ))}
+      <h4>Property</h4>
+      {modifiers.property.map((mod, i) => (
+        <ToolboxBlock type={BlockTypes.MOD} key={i} label={mod.label} />
       ))}
     </div>
   );
