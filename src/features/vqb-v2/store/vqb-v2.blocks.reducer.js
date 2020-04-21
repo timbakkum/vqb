@@ -1,4 +1,4 @@
-import { COPY_BLOCK, CREATE_BLOCK } from "./vqb-v2.actions";
+import { CREATE_BLOCK } from "./vqb-v2.actions";
 
 const initialBlocks = {};
 

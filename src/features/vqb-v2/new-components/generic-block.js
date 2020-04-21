@@ -47,6 +47,18 @@ const getHorizontalDragLocation = (monitor, ref) => {
   }
 };
 
+const getAcceptTypes = (blockType) => {
+  switch (blockType) {
+    case BlockTypes.MOD:
+      return BlockTypes.MOD;
+    case BlockTypes.NODE:
+    case BlockTypes.REL:
+      return [BlockTypes.NODE, BlockTypes.REL, BlockTypes.MOD];
+    default:
+      return [];
+  }
+};
+
 const getBlockData = createSelector(
   (state) => state.vqbv2.blocks,
   (_, blockId) => blockId,
@@ -55,33 +67,35 @@ const getBlockData = createSelector(
   }
 );
 
-const NewBlock = ({
+const GenericBlock = ({
   id,
   index,
   collectionCount,
   handleMoveBlock,
   handleUpdateQuery,
+  orientation,
 }) => {
   const ref = useRef(null);
   const [prototypeDragLocation, setPrototypeDragLocation] = useState();
 
   const blockData = useSelector((state) => getBlockData(state, id));
   // const dispatch = useDispatch();
-
+  const acceptTypes = getAcceptTypes(blockData.type);
   const [
     { isPrototypeHovering, prototypeType, isOver, itemOver },
     drop,
   ] = useDrop({
-    accept: [BlockTypes.NODE, BlockTypes.REL, BlockTypes.MOD], // TODO only accept based on type
+    accept: acceptTypes, // TODO only accept based on type
     drop(item) {
       if (!item.isPrototype) {
         return; // only allow dropping of prototype blocks on (adjacent to) this block
       }
-      if (item.type === BlockTypes.MOD) {
+      if (Array.isArray(acceptTypes) && item.type === BlockTypes.MOD) {
         return; // TODO remove once query dropzone has MOD as accept
       }
       console.log("dropped a prototype block", item);
       handleUpdateQuery({
+        // TODO make generic
         insertIndex: prototypeDragLocation === "prev" ? index : index + 1,
         blockData: {
           type: item.type,
@@ -95,7 +109,7 @@ const NewBlock = ({
         // bail if ref is not attached to dom node
         return;
       }
-      if (item.type === BlockTypes.MOD) {
+      if (Array.isArray(acceptTypes) && item.type === BlockTypes.MOD) {
         setPrototypeDragLocation(null);
         return; // TODO remove once query dropzone has MOD as accept
       }
@@ -174,15 +188,18 @@ const NewBlock = ({
   });
 
   drag(drop(ref));
+  console.log(index, collectionCount);
 
   return (
-    <BaseBlockWrapper ref={ref}>
+    <BaseBlockWrapper ref={ref} orientation={orientation}>
       <BaseBlockPlaceholder
         shouldDisplay={isPrototypeHovering && prototypeDragLocation === "prev"}
         type={prototypeType}
+        orientation={orientation}
       />
       <BaseBlock
         type={blockData.type}
+        orientation={orientation}
         isBeingDragged={isDragging}
         hasPrev={
           (index !== 0 && index <= collectionCount - 1) ||
@@ -211,9 +228,10 @@ const NewBlock = ({
       <BaseBlockPlaceholder
         shouldDisplay={isPrototypeHovering && prototypeDragLocation === "next"}
         type={prototypeType}
+        orientation={orientation}
       />
     </BaseBlockWrapper>
   );
 };
 
-export default NewBlock;
+export default GenericBlock;

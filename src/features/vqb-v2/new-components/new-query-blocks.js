@@ -19,16 +19,17 @@ const QueryDropzone = styled.div`
   flex-direction: row;
   flex-wrap: nowrap;
   /* prevent children from stretching whole height of this component */
-  align-items: flex-start;
+  align-items: center;
+  align-content: baseline;
+  justify-content: flex-start;
   padding: 10px;
 `;
 
 const InitialQueryDropzone = ({ queryId }) => {
   const dispatch = useDispatch();
-  const [{ isOver, canDrop, itemType }, drop] = useDrop({
+  const [{ isOver, canDrop }, drop] = useDrop({
     accept: [BlockTypes.NODE, BlockTypes.REL],
     drop: (item, monitor) => {
-      console.log("dropped sm", monitor.canDrop());
       // dispatch copy block
       dispatch(
         copyBlock({
@@ -38,9 +39,8 @@ const InitialQueryDropzone = ({ queryId }) => {
       );
     },
     canDrop: (item, monitor) => {
-      console.log("test", item.isPrototype);
       const { isPrototype } = item;
-      return true;
+      return isPrototype;
     },
     collect: (monitor) => {
       return {
