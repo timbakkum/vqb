@@ -6,7 +6,7 @@ import styled from "styled-components";
 import QueryToolbox from "./components/query-toolbox";
 import QueryGrid from "./components/query-grid";
 import QueryRow from "./components/query-row";
-import QueryBlocks from "./components/query-blocks";
+import NewQueryBlocks from "./new-components/new-query-blocks";
 // import QueryColumn from "./components/query-column";
 
 const VQBGrid = styled.main`
@@ -23,7 +23,7 @@ export default function VQBv2() {
         <QueryToolbox />
         <QueryGrid>
           <QueryRow>
-            <QueryBlocks queryId="q1" />
+            <NewQueryBlocks queryId="q1" />
           </QueryRow>
         </QueryGrid>
       </VQBGrid>

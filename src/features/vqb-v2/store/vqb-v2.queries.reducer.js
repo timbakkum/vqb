@@ -1,4 +1,4 @@
-import { UPDATE_QUERY } from "./vqb-v2.actions";
+import { UPDATE_QUERY, REORDER_QUERY } from "./vqb-v2.actions";
 
 const initialQueries = {
   q1: {
@@ -29,13 +29,13 @@ const addItemToArrayEnd = (list, item) => {
   return result;
 };
 
-// const reorderOrderArray = (list, startIndex, endIndex) => {
-//   const result = Array.from(list);
-//   const [removed] = result.splice(startIndex, 1);
+const reorderOrderArray = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
 
-//   result.splice(endIndex, 0, removed);
-//   return result;
-// };
+  result.splice(endIndex, 0, removed);
+  return result;
+};
 
 // const removeItemFromArray = (list, index) => {
 //   const result = Array.from(list);
@@ -55,6 +55,22 @@ const queries = (state = initialQueries, action) => {
         [queryId]: {
           ...state[queryId],
           blocks: addItem(state[queryId].blocks, blockId, index),
+        },
+      };
+    }
+    case REORDER_QUERY: {
+      const {
+        destination: { queryId, startIndex, endIndex },
+      } = action.payload;
+      return {
+        ...state,
+        [queryId]: {
+          ...state[queryId],
+          blocks: reorderOrderArray(
+            state[queryId].blocks,
+            startIndex,
+            endIndex
+          ),
         },
       };
     }
