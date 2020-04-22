@@ -1,9 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
+import { BlockTypes } from "../new-components/base-block";
 
 export const COPY_BLOCK = "COPY_BLOCK"; // MOVE BLOCK FROM TOOLBOX TO QUERY
 export const CREATE_BLOCK = "CREATE_BLOCK"; // ADD BLOCK TO STORE
 export const UPDATE_QUERY = "UPDATE_QUERY"; // UPDATE THE QUERY DATA TO INCLUDE (NEW) BLOCK ID AT RIGHT POSITION IN DATA
 export const REORDER_QUERY = "REORDER_QUERY"; // REORDER QUERY: MOVE ONE ITEM TO A NEW POSITION
+export const REORDER_COLLECTION = "REORDER_COLLECTION";
 export const UPDATE_BLOCK = "UPDATE_BLOCK"; // ADD A MODIFIER TO A QUERY?
 export const UPDATE_MODIFIER_GROUP = "UPDATE_MODIFIER_GROUP"; // add a modifier to a modifier group
 export const CREATE_MODIFIER_GROUP = "CREATE_MODIFIER_GROUP"; // create a new modifier group by id
@@ -33,6 +35,13 @@ export const updateQuery = ({ destination, blockId }) => ({
 
 export const reorderQuery = ({ destination }) => ({
   type: REORDER_QUERY,
+  payload: {
+    destination,
+  },
+});
+
+export const reorderCollection = ({ destination }) => ({
+  type: REORDER_COLLECTION,
   payload: {
     destination,
   },
@@ -87,4 +96,18 @@ export const copyBlock = ({ destination, blockData }) => (
     })
   );
   dispatch(updateQuery({ destination, blockId: newBlockId }));
+};
+
+export const copyBlockToCollection = (payload) => {
+  switch (
+    payload.blockData.type // TODO make collectionType instead here
+  ) {
+    case BlockTypes.MOD:
+      return copyModifierBlock(payload);
+    case BlockTypes.REL:
+    case BlockTypes.NODE:
+      return copyBlock(payload);
+    default:
+      break;
+  }
 };

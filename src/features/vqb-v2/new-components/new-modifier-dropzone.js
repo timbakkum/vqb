@@ -3,7 +3,11 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 import { useDrop } from "react-dnd";
-import { copyModifierBlock } from "./../store/vqb-v2.actions";
+import {
+  copyModifierBlock,
+  copyBlockToCollection,
+  reorderCollection,
+} from "./../store/vqb-v2.actions";
 import styled, { css } from "styled-components";
 import GenericBlock from "./generic-block";
 
@@ -85,7 +89,7 @@ const CollectionDropzone = ({
     drop: (item, monitor) => {
       dispatch(
         copyModifierBlock({
-          destination: { modifierGroupId: collectionId, index: 0 }, // TODO make more dynamic
+          destination: { collectionId, index: 0 }, // TODO make more dynamic
           blockData: item,
         })
       );
@@ -107,6 +111,29 @@ const CollectionDropzone = ({
     return null; // bail if something goes wrong TODO change this/remove
   }
 
+  const updateCollection = ({ blockData, insertIndex }) => {
+    console.log("test");
+    dispatch(
+      copyBlockToCollection({
+        destination: { collectionType, collectionId, index: insertIndex },
+        blockData,
+      })
+    );
+  };
+
+  const moveBlock = ({ collectionType, dragIndex, hoverIndex }) => {
+    dispatch(
+      reorderCollection({
+        destination: {
+          collectionType,
+          collectionId,
+          startIndex: dragIndex,
+          endIndex: hoverIndex,
+        },
+      })
+    );
+  };
+
   return (
     <BaseDropzone
       ref={drop}
@@ -126,8 +153,8 @@ const CollectionDropzone = ({
             id={id}
             index={index}
             collectionCount={collectionData.blocks.length}
-            handleMoveBlock={() => null}
-            handleUpdateQuery={() => null}
+            handleMoveBlock={moveBlock}
+            handleUpdateQuery={updateCollection}
             orientation={DisplayModes.VERTICAL}
           >
             modifier id {id}
