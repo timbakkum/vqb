@@ -4,8 +4,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 import styled from "styled-components";
 
-import NewBlock, { BlockTypes } from "./new-block";
+import GenericBlock from "./generic-block";
 import { copyBlock, reorderQuery } from "./../store/vqb-v2.actions";
+import { BlockTypes, DisplayModes } from "./constants/constants";
 
 const QueryDropzone = styled.div`
   position: relative;
@@ -94,13 +95,14 @@ export default function QueryBlocks({ queryId }) {
   return (
     <QueryDropzone>
       {blocks.map((id, index) => (
-        <NewBlock
+        <GenericBlock
           key={id}
           id={id}
           index={index}
           collectionCount={blocks.length}
           handleMoveBlock={moveBlock}
           handleUpdateQuery={updateQuery}
+          collectionOrientation={DisplayModes.HORIZONTAL}
         />
       ))}
     </QueryDropzone>

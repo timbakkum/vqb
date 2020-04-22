@@ -7,45 +7,19 @@ import {
   BaseBlockPlaceholder,
   BaseBlockWrapper,
 } from "./base-block";
-import CollectionDropzone, {
+import BlockContents from "./base-block-contents";
+import CollectionDropzone from "./new-modifier-dropzone";
+import {
+  getDragLocationByOrientation,
+  shouldMoveBlock,
+} from "./helpers/drag.helpers";
+
+import {
+  BlockTypes,
   DisplayModes,
   CollectionTypes,
-} from "./new-modifier-dropzone";
-
-export const BlockTypes = {
-  NODE: "node",
-  REL: "relationship",
-  MOD: "modifier",
-};
-
-// const getVerticalDragLocation = (monitor, ref) => {
-//   if (!monitor.isOver()) return null;
-//   const hoverBoundingRect = ref.current.getBoundingClientRect();
-//   const clientOffset = monitor.getClientOffset();
-//   const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-//   const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-//   console.log("hoverMiddleY; ", hoverMiddleY, "hoverClientY; ", hoverClientY);
-//   if (hoverClientY < hoverMiddleY) {
-//     return "top";
-//   }
-//   if (hoverClientY >= hoverMiddleY) {
-//     return "bottom";
-//   }
-// };
-
-const getHorizontalDragLocation = (monitor, ref) => {
-  if (!monitor.isOver()) return null;
-  const hoverBoundingRect = ref.current.getBoundingClientRect();
-  const clientOffset = monitor.getClientOffset();
-  const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
-  const hoverClientX = clientOffset.x - hoverBoundingRect.left;
-  if (hoverClientX < hoverMiddleX) {
-    return "prev"; // TODO use constants here
-  }
-  if (hoverClientX >= hoverMiddleX) {
-    return "next";
-  }
-};
+  DragLocation,
+} from "./constants/constants";
 
 const getAcceptTypes = (blockType) => {
   switch (blockType) {
@@ -73,13 +47,12 @@ const GenericBlock = ({
   collectionCount,
   handleMoveBlock,
   handleUpdateQuery,
-  orientation,
+  collectionOrientation,
 }) => {
   const ref = useRef(null);
   const [prototypeDragLocation, setPrototypeDragLocation] = useState();
 
   const blockData = useSelector((state) => getBlockData(state, id));
-  // const dispatch = useDispatch();
   const acceptTypes = getAcceptTypes(blockData.type);
   const [
     { isPrototypeHovering, prototypeType, isOver, itemOver },
@@ -93,13 +66,14 @@ const GenericBlock = ({
       if (Array.isArray(acceptTypes) && item.type === BlockTypes.MOD) {
         return; // TODO remove once query dropzone has MOD as accept
       }
-      console.log("dropped a prototype block", item);
       handleUpdateQuery({
         // TODO make generic
-        insertIndex: prototypeDragLocation === "prev" ? index : index + 1,
+        insertIndex:
+          prototypeDragLocation === DragLocation.PREV ? index : index + 1,
         blockData: {
           type: item.type,
           label: item.label,
+          predicateData: item.predicateData,
         },
         // TODO handle moving NODES and RELS moves between queries?
       });
@@ -116,7 +90,11 @@ const GenericBlock = ({
 
       if (item.isPrototype) {
         // update prototype drag location state whenever we're dragging a prototype over this block
-        const currentDragLocation = getHorizontalDragLocation(monitor, ref);
+        const currentDragLocation = getDragLocationByOrientation(
+          monitor,
+          ref,
+          collectionOrientation
+        );
         if (currentDragLocation !== prototypeDragLocation) {
           // update the location of the prototype block
           setPrototypeDragLocation(currentDragLocation);
@@ -127,46 +105,27 @@ const GenericBlock = ({
       const dragIndex = item.index;
       const hoverIndex = index;
 
-      // check if we need to reorder items within the list
-      // NOTE this assumes drag and reorder within the SAME list
-      // TODO implement dragging from list to another
-
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
+      if (
+        shouldMoveBlock(
+          monitor,
+          ref,
+          collectionOrientation,
+          dragIndex,
+          hoverIndex
+        )
+      ) {
+        handleMoveBlock({ dragIndex, hoverIndex });
+        // Note: we're mutating the monitor item here!
+        // Generally it's better to avoid mutations,
+        // but it's good here for the sake of performance
+        // to avoid expensive index searches.
+        // TODO check if this has any side effects or if we can easily do this via manipulating our store state?
+        // maybe avoiding this can avoid the return-to-wrong-index-animation when released?
+        item.index = hoverIndex;
       }
-      // Determine rectangle on screen
-      const hoverBoundingRect = ref.current.getBoundingClientRect();
-      // Get horizontal middle
-      const hoverMiddleX =
-        (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
-      // Determine mouse position
-      const clientOffset = monitor.getClientOffset();
-      // Get pixels to the top
-      const hoverClientX = clientOffset.x - hoverBoundingRect.left;
-      // Only perform the move when the mouse has crossed half of the items width
-      // When dragging right, only move when the cursor is past 50%
-      // When dragging left, only move when the cursor is before 50%
-      // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
-        return;
-      }
-      // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
-        return;
-      }
-      // Time to actually perform the action
-      handleMoveBlock({ dragIndex, hoverIndex });
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
-      // TODO check if this has any side effects or if we can easily do this via manipulating our store state?
-      item.index = hoverIndex;
     },
     collect(monitor) {
       const itemBeingDraggedOver = monitor.getItem();
-      console.log("item over parent? ", monitor.isOver(), monitor.getItem());
       return {
         isPrototypeHovering:
           monitor.isOver() && // bail fast because this runs for every item whenever something is dragging!
@@ -188,33 +147,32 @@ const GenericBlock = ({
   });
 
   drag(drop(ref));
-  console.log(index, collectionCount);
 
   return (
-    <BaseBlockWrapper ref={ref} orientation={orientation}>
+    <BaseBlockWrapper ref={ref} orientation={collectionOrientation}>
       <BaseBlockPlaceholder
-        shouldDisplay={isPrototypeHovering && prototypeDragLocation === "prev"}
+        shouldDisplay={
+          isPrototypeHovering && prototypeDragLocation === DragLocation.PREV
+        }
         type={prototypeType}
-        orientation={orientation}
+        orientation={collectionOrientation}
       />
       <BaseBlock
         type={blockData.type}
-        orientation={orientation}
+        orientation={collectionOrientation}
         isBeingDragged={isDragging}
         hasPrev={
           (index !== 0 && index <= collectionCount - 1) ||
-          (isPrototypeHovering && prototypeDragLocation === "prev")
+          (isPrototypeHovering && prototypeDragLocation === DragLocation.PREV)
         }
         hasNext={
           index !== collectionCount - 1 ||
           (index === collectionCount - 1 &&
             isPrototypeHovering &&
-            prototypeDragLocation === "next")
+            prototypeDragLocation === DragLocation.NEXT)
         }
       >
-        <span>
-          {blockData.label}, id: ${blockData.id.substring(0, 5)}
-        </span>
+        <BlockContents {...blockData} />
         {blockData.type === BlockTypes.NODE && (
           <CollectionDropzone
             collectionType={CollectionTypes.MOD}
@@ -228,7 +186,7 @@ const GenericBlock = ({
       <BaseBlockPlaceholder
         shouldDisplay={isPrototypeHovering && prototypeDragLocation === "next"}
         type={prototypeType}
-        orientation={orientation}
+        orientation={collectionOrientation}
       />
     </BaseBlockWrapper>
   );

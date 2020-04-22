@@ -96,7 +96,7 @@ export const BaseBlock = styled.div`
   display: block;
   position: relative;
   min-width: 125px;
-  max-width: 250px;
+  /* max-width: 250px; */
   min-height: 40px;
   padding: 10px;
   font-size: 12px;

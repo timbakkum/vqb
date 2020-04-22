@@ -87,6 +87,7 @@ const CollectionDropzone = ({
   const [{ isOver, canDrop, itemType }, drop] = useDrop({
     accept: acceptTypes,
     drop: (item, monitor) => {
+      console.log(item);
       dispatch(
         copyModifierBlock({
           destination: { collectionId, index: 0 }, // TODO make more dynamic
@@ -112,7 +113,6 @@ const CollectionDropzone = ({
   }
 
   const updateCollection = ({ blockData, insertIndex }) => {
-    console.log("test");
     dispatch(
       copyBlockToCollection({
         destination: { collectionType, collectionId, index: insertIndex },
@@ -155,7 +155,7 @@ const CollectionDropzone = ({
             collectionCount={collectionData.blocks.length}
             handleMoveBlock={moveBlock}
             handleUpdateQuery={updateCollection}
-            orientation={DisplayModes.VERTICAL}
+            collectionOrientation={DisplayModes.VERTICAL}
           >
             modifier id {id}
           </GenericBlock>

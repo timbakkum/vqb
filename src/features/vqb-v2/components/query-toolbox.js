@@ -38,24 +38,43 @@ const modifiers = {
   boolean: [
     {
       label: "AND",
+      predicateData: {
+        type: "boolean",
+        operatorValue: "AND",
+      },
     },
     {
       label: "NOT",
+      predicateData: {
+        type: "boolean",
+        operatorValue: "NOT",
+      },
     },
     {
       label: "OR",
+      predicateData: {
+        type: "boolean",
+        operatorValue: "OR",
+      },
     },
     {
       label: "XOR",
+      predicateData: {
+        type: "boolean",
+        operatorValue: "XOR",
+      },
     },
   ],
   property: [
     {
       label: "property",
-      property: "", // one of the available properties
-      propertyType: "", // string | number
-      operator: "", // equals, contains etc
-      value: "", // value to filter property by
+      predicateData: {
+        type: "property",
+        propertyValue: "", // one of the available properties
+        propertyType: "", // string | number
+        operatorValue: "", // equals, contains etc
+        value: "", // value to filter property by
+      },
     },
   ],
 };
@@ -81,11 +100,11 @@ export default function QueryToolBox() {
       <h3>Modifiers/Filters</h3>
       <h4>Boolean</h4>
       {modifiers.boolean.map((mod, i) => (
-        <ToolboxBlock type={BlockTypes.MOD} key={i} label={mod.label} />
+        <ToolboxBlock type={BlockTypes.MOD} key={i} {...mod} />
       ))}
       <h4>Property</h4>
       {modifiers.property.map((mod, i) => (
-        <ToolboxBlock type={BlockTypes.MOD} key={i} label={mod.label} />
+        <ToolboxBlock type={BlockTypes.MOD} key={i} {...mod} />
       ))}
     </div>
   );

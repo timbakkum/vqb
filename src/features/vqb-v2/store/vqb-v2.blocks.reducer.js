@@ -5,7 +5,13 @@ const initialBlocks = {};
 const blocks = (state = initialBlocks, action) => {
   switch (action.type) {
     case CREATE_BLOCK: {
-      const { id, type, label, modifierGroupId } = action.payload;
+      const {
+        id,
+        type,
+        label,
+        modifierGroupId,
+        predicateData,
+      } = action.payload;
       return {
         ...state,
         [id]: {
@@ -14,6 +20,7 @@ const blocks = (state = initialBlocks, action) => {
           type,
           label,
           modifierGroupId,
+          predicateData,
         },
       };
     }

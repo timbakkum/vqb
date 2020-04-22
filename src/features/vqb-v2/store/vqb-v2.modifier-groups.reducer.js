@@ -66,7 +66,6 @@ const modifierGroups = (state = initialModifierGroups, action) => {
         // tODO use collectionType to make this more generic
         destination: { collectionId, collectionType, startIndex, endIndex },
       } = action.payload;
-      console.log(state, collectionId);
       return {
         ...state,
         [collectionId]: {

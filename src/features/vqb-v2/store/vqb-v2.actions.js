@@ -58,7 +58,8 @@ export const copyModifierBlock = ({ destination, blockData }) => (
   dispatch,
   getState
 ) => {
-  const { type, label } = blockData;
+  const { type, label, predicateData } = blockData;
+  console.log(blockData);
 
   const newBlockId = uuidv4();
 
@@ -67,6 +68,7 @@ export const copyModifierBlock = ({ destination, blockData }) => (
       type,
       label,
       id: newBlockId,
+      predicateData,
     })
   );
 
