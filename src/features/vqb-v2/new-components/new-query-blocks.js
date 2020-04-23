@@ -15,7 +15,7 @@ const QueryDropzone = styled.div`
   min-height: 300px;
   overflow: auto;
   background: ${(props) =>
-    props.canDrop && props.isOver ? "green" : "yellow"};
+    props.canDrop && props.isOver ? "#81c784" : "#F3F4F6"};
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;

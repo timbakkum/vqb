@@ -7,6 +7,7 @@ import QueryToolbox from "./components/query-toolbox";
 import QueryGrid from "./components/query-grid";
 import QueryRow from "./components/query-row";
 import NewQueryBlocks from "./new-components/new-query-blocks";
+import CypherVisualizer from "./new-components/cypher-visualizer";
 // import QueryColumn from "./components/query-column";
 
 const VQBGrid = styled.main`
@@ -24,6 +25,9 @@ export default function VQBv2() {
         <QueryGrid>
           <QueryRow>
             <NewQueryBlocks queryId="q1" />
+          </QueryRow>
+          <QueryRow>
+            <CypherVisualizer />
           </QueryRow>
         </QueryGrid>
       </VQBGrid>

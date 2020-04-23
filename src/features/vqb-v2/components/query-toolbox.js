@@ -98,12 +98,12 @@ export default function QueryToolBox() {
         />
       ))}
       <h3>Modifiers/Filters</h3>
-      <h4>Boolean</h4>
-      {modifiers.boolean.map((mod, i) => (
-        <ToolboxBlock type={BlockTypes.MOD} key={i} {...mod} />
-      ))}
       <h4>Property</h4>
       {modifiers.property.map((mod, i) => (
+        <ToolboxBlock type={BlockTypes.MOD} key={i} {...mod} />
+      ))}
+      <h4>Boolean</h4>
+      {modifiers.boolean.map((mod, i) => (
         <ToolboxBlock type={BlockTypes.MOD} key={i} {...mod} />
       ))}
     </div>
