@@ -137,21 +137,25 @@ export default function CypherVisualizer({ queryId = "q1" }) {
         padding: "10px",
       }}
     >
-      <h3>Cypher query visualizer:</h3>
+      <h3>Cypher query visualizer</h3>
       <div>
-        {Object.keys(q).map((key) => {
-          if (q[key].length > 0) {
-            return (
-              <div>
-                {renderValue(key)}
-                <span> </span>
-                {renderValues(q[key])}
-              </div>
-            );
-          } else {
-            return <p>Nothing to visualize yet!</p>;
-          }
-        })}
+        {q.MATCH.length > 0 ? (
+          Object.keys(q).map((key) => {
+            if (q[key].length > 0) {
+              return (
+                <div>
+                  {renderValue(key)}
+                  <span> </span>
+                  {renderValues(q[key])}
+                </div>
+              );
+            }
+          })
+        ) : (
+          <p>
+            Nothing to visualize yet, build a query in the zone above first!
+          </p>
+        )}
       </div>
     </div>
   );
