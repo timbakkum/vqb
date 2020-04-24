@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { BlockTypes } from "./base-block";
 import { useDispatch } from "react-redux";
@@ -20,7 +20,7 @@ const propertyKeys = [
   "rating",
 ];
 
-const stringOperators = ["EQUALS", "ENDS WITH", "CONTAINS", "REGEX"];
+const stringOperators = ["=", "ENDS WITH", "CONTAINS", "REGEX"];
 
 export const BaseBlockContents = styled.div``;
 
@@ -38,12 +38,10 @@ export const InputRow = styled.div`
 `;
 
 export default ({ id, label, type, predicateData }) => {
-  console.log(id);
   const dispatch = useDispatch();
 
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
-    console.log(e.target, e.target.name, e.target.value);
     dispatch(
       updateBlock({
         blockId: id,

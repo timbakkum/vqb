@@ -19,7 +19,7 @@ const colorMap = {
 
 export const StyledBlock = styled.div`
   display: block;
-  padding: 10px;
+  /* padding: 10px; */
   font-size: 12px;
   text-align: center;
   border-width: 1px;
