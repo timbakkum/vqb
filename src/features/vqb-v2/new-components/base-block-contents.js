@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { BlockTypes } from "./base-block";
+import { useDispatch } from "react-redux";
+import { updateBlock } from "../store/vqb-v2.actions";
 
 const predicateTypes = {
   PROPERTY: "property",
@@ -18,7 +20,7 @@ const propertyKeys = [
   "rating",
 ];
 
-const stringOperators = ["equals", "ends with", "contains", "regex"];
+const stringOperators = ["EQUALS", "ENDS WITH", "CONTAINS", "REGEX"];
 
 export const BaseBlockContents = styled.div``;
 
@@ -35,29 +37,20 @@ export const InputRow = styled.div`
   }
 `;
 
-export default ({ label, type, predicateData }) => {
-  console.log(type);
-  const [propertyValue, setPropertyValue] = useState(
-    (predicateData && predicateData.propertyValue) || ""
-  );
-  const [operator, setOperatorValue] = useState(
-    (predicateData && predicateData.operatorValue) || ""
-  );
+export default ({ id, label, type, predicateData }) => {
+  console.log(id);
+  const dispatch = useDispatch();
 
-  const [value, setValue] = useState(
-    (predicateData && predicateData.value) || ""
-  );
-
-  const handlePropertyChange = (e) => {
-    setPropertyValue(e.target.value);
-  };
-
-  const handleOperatorChange = (e) => {
-    setOperatorValue(e.target.value);
-  };
-
-  const handleValueChange = (e) => {
-    setValue(e.target.value);
+  const handleFieldChange = (e) => {
+    const { name, value } = e.target;
+    console.log(e.target, e.target.name, e.target.value);
+    dispatch(
+      updateBlock({
+        blockId: id,
+        field: name,
+        newValue: value,
+      })
+    );
   };
 
   return (
@@ -66,14 +59,22 @@ export default ({ label, type, predicateData }) => {
       {type === BlockTypes.MOD &&
         predicateData.type === predicateTypes.PROPERTY && (
           <InputRow>
-            <select value={propertyValue} onChange={handlePropertyChange}>
+            <select
+              value={(predicateData && predicateData.propertyValue) || ""}
+              onChange={handleFieldChange}
+              name="propertyValue"
+            >
               {propertyKeys.map((k, i) => (
                 <option key={i} value={k}>
                   {k}
                 </option>
               ))}
             </select>
-            <select value={operator} onChange={handleOperatorChange}>
+            <select
+              value={(predicateData && predicateData.operatorValue) || ""}
+              onChange={handleFieldChange}
+              name="operatorValue"
+            >
               {stringOperators.map((k, i) => (
                 <option key={i} value={k}>
                   {k}
@@ -81,7 +82,12 @@ export default ({ label, type, predicateData }) => {
               ))}
             </select>
 
-            <input type="text" onChange={handleValueChange} value={value} />
+            <input
+              type="text"
+              onChange={handleFieldChange}
+              value={(predicateData && predicateData.value) || ""}
+              name="value"
+            />
           </InputRow>
         )}
     </>

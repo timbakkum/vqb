@@ -3,10 +3,10 @@ import { BlockTypes } from "../new-components/base-block";
 
 export const COPY_BLOCK = "COPY_BLOCK"; // MOVE BLOCK FROM TOOLBOX TO QUERY
 export const CREATE_BLOCK = "CREATE_BLOCK"; // ADD BLOCK TO STORE
+export const UPDATE_BLOCK = "UPDATE_BLOCK"; // update block values
 export const UPDATE_QUERY = "UPDATE_QUERY"; // UPDATE THE QUERY DATA TO INCLUDE (NEW) BLOCK ID AT RIGHT POSITION IN DATA
 export const REORDER_QUERY = "REORDER_QUERY"; // REORDER QUERY: MOVE ONE ITEM TO A NEW POSITION
 export const REORDER_COLLECTION = "REORDER_COLLECTION";
-export const UPDATE_BLOCK = "UPDATE_BLOCK"; // ADD A MODIFIER TO A QUERY?
 export const UPDATE_MODIFIER_GROUP = "UPDATE_MODIFIER_GROUP"; // add a modifier to a modifier group
 export const CREATE_MODIFIER_GROUP = "CREATE_MODIFIER_GROUP"; // create a new modifier group by id
 
@@ -30,6 +30,15 @@ export const updateQuery = ({ destination, blockId }) => ({
   payload: {
     destination,
     blockId,
+  },
+});
+
+export const updateBlock = ({ blockId, field, newValue }) => ({
+  type: UPDATE_BLOCK,
+  payload: {
+    id: blockId,
+    field,
+    newValue,
   },
 });
 

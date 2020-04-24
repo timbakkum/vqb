@@ -1,4 +1,5 @@
-import { CREATE_BLOCK } from "./vqb-v2.actions";
+import { CREATE_BLOCK, UPDATE_BLOCK } from "./vqb-v2.actions";
+import produce from "immer";
 
 const initialBlocks = {};
 
@@ -23,6 +24,15 @@ const blocks = (state = initialBlocks, action) => {
           predicateData,
         },
       };
+    }
+    case UPDATE_BLOCK: {
+      const { id, field, newValue } = action.payload;
+      const nextState = produce(state, (draftState) => {
+        console.log(draftState);
+        draftState[id].predicateData[field] = newValue;
+      });
+
+      return nextState;
     }
 
     default:
