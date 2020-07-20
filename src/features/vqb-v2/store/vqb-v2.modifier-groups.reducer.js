@@ -78,6 +78,9 @@ const modifierGroups = (state = initialModifierGroups, action) => {
         },
       };
     }
+
+    case "RESET_ALL":
+      return initialModifierGroups
     default:
       return state;
   }

@@ -10,6 +10,10 @@ export const REORDER_COLLECTION = "REORDER_COLLECTION";
 export const UPDATE_MODIFIER_GROUP = "UPDATE_MODIFIER_GROUP"; // add a modifier to a modifier group
 export const CREATE_MODIFIER_GROUP = "CREATE_MODIFIER_GROUP"; // create a new modifier group by id
 
+export const resetAll = () => ({
+  type: "RESET_ALL",
+})
+
 export const updateModifierGroup = ({ destination, blockId }) => ({
   type: UPDATE_MODIFIER_GROUP,
   payload: {

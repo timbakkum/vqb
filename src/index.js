@@ -2,14 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import "./index.css";
-import App from "./App";
+import VQBv2 from "./features/vqb-v2/vqb-v2";
+
 import * as serviceWorker from "./serviceWorker";
 import Store from "./store/store";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={Store}>
-      <App />
+      <VQBv2 />
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

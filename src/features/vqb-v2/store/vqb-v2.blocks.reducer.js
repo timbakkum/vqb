@@ -35,6 +35,9 @@ const blocks = (state = initialBlocks, action) => {
       return nextState;
     }
 
+    case "RESET_ALL": 
+      return initialBlocks
+
     default:
       return state;
   }

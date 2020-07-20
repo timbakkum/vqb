@@ -74,6 +74,8 @@ const queries = (state = initialQueries, action) => {
         },
       };
     }
+    case "RESET_ALL":
+      return initialQueries
     default:
       return state;
   }
